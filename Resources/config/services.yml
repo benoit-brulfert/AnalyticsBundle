@@ -1,0 +1,7 @@
+parameters:
+#    cethyworks_analytics.example.class: Cethyworks\AnalyticsBundle\Example
+
+services:
+#    cethyworks_analytics.example:
+#        class: %cethyworks_analytics.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
