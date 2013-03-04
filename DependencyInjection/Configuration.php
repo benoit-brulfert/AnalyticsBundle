@@ -3,27 +3,49 @@
 namespace Cethyworks\AnalyticsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
- */
-class Configuration implements ConfigurationInterface
+class Configuration
 {
     /**
-     * {@inheritDoc}
+     * Generates the configuration tree.
+     *
+     * @return \Symfony\Component\Config\Definition\ArrayNode The config tree
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTree()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('cethyworks_analytics');
+        $tree = new TreeBuilder();
+        $rootNode = $tree->root('cethyworks_analytics');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+            ->arrayNode('environments')
+                ->prototype('scalar')->end()
+            ->end()
+            ->arrayNode('trackers')
+                ->requiresAtLeastOneElement()
+                ->useAttributeAsKey('name')
+                ->prototype('array')
+                    ->children()
+                        ->scalarNode('type')->end()
+                        ->scalarNode('class')->defaultNull()->end()
+                        ->scalarNode('template')->defaultNull()->end()
+                        ->arrayNode('params')
+                            ->children()
+                                ->scalarNode('url')->end()
+                                ->scalarNode('site_id')->end()
+                                ->scalarNode('account')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('environments')
+                            ->addDefaultsIfNotSet()
+                            ->defaultValue(array())
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
-        return $treeBuilder;
+        return $tree->buildTree();
     }
 }
