@@ -27,24 +27,56 @@ class CethyworksAnalyticsExtension extends Extension
         $configuration = new Configuration();
         $processor = new Processor();
         $config = $processor->process($configuration->getConfigTree(), $configs);
-        
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-    
-        foreach ($config['trackers'] as $name => $tracker) {
-            $this->loadTracker($name, $tracker, $container, $config['environments']);
+
+        if(isset($config['segmentIo']) && isset($config['trackers']) && !empty($config['trackers']))
+            throw new \InvalidArgumentException(sprintf('Not possible to load segmenIo and trackers'));
+            
+        if(isset($config['segmentIo']))
+        {
+            foreach ($config['segmentIo'] as $name => $segmentIo) {
+                $this->loadSegmentIo($name, $segmentIo, $container, $config['environments']);
+            }
+        }
+        else
+        {
+            foreach ($config['trackers'] as $name => $tracker) {
+                $this->loadTracker($name, $tracker, $container, $config['environments']);
+            }
         }
     }
     
+    public function loadSegmentIo($name=null, $segmentIo, ContainerBuilder $container, array $environments, $class=null)
+    {
+        $name= $segmentIo;
+        $class = $class ? : $container->getParameter('cethyworks.analytics_tracker.class');
+        $template = $container->getParameter('cethyworks.analytics_auto.template');
+
+        $this->addTrackerDefinition($name, $class, $environments, $template, $params=null, $container);
+    }
+
+    public function loadGoogleAnalyticsTracker($name, $class, array $environments, $template, array $params, ContainerBuilder $container)
+    {
+          $this->ensureParameters($name, array('account'), $params);
+
+        $class = $class ? : $container->getParameter('cethyworks.analytics_tracker.class');
+        $template = $template ? : $container->getParameter('cethyworks.googleAnalytics_tracker.template');
+
+        $this->addTrackerDefinition($name, $class, $environments, $template, $params, $container);
+    }
+
     public function loadTracker($name, array $tracker, ContainerBuilder $container, array $environments)
     {
         $methodName = sprintf('load%sTracker', $container->camelize($tracker['type']));
+        
         if(! method_exists($this, $methodName))
         {
             throw new \InvalidArgumentException(sprintf('The \'%s\' tracker type is not supported.', $tracker['type']));
         }
-
-        $this->$methodName(
+        
+         $this->$methodName(
             $name,
             $tracker['class'],
             array_merge($tracker['environments'], $environments),
@@ -54,16 +86,6 @@ class CethyworksAnalyticsExtension extends Extension
         );
     }
     
-    public function loadGoogleAnalyticsTracker($name, $class, array $environments, $template, array $params, ContainerBuilder $container)
-    {
-        $this->ensureParameters($name, array('account'), $params);
-
-        $class = $class ? : $container->getParameter('cethyworks.analytics_tracker.class');
-        $template = $template ? : $container->getParameter('cethyworks.analytics_tracker.template');
-
-        $this->addTrackerDefinition($name, $class, $environments, $template, $params, $container);
-    }
-   
      /**
      * Adds a tracker definition to the given container builder
      *

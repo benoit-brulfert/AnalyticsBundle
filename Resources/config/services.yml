@@ -1,3 +1,4 @@
 parameters:
     cethyworks.analytics_tracker.class: Cethyworks\AnalyticsBundle\Listener\AnalyticsTrackerListener
-    cethyworks.analytics_tracker.template: CethyworksAnalyticsBundle:Tracker:analytics.html.twig
+    cethyworks.googleAnalytics_tracker.template: CethyworksAnalyticsBundle:Tracker:googleAnalytics.html.twig
+    cethyworks.analytics_auto.template: CethyworksAnalyticsBundle:SegmentIo:analytics_auto.html.twig

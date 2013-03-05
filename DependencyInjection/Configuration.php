@@ -44,8 +44,14 @@ class Configuration
                     ->end()
                 ->end()
             ->end()
+            ->arrayNode('segmentIo')
+               ->children()
+                       ->scalarNode('account_id')
+                ->end()
+            ->end()
         ;
 
         return $tree->buildTree();
     }
 }
+
