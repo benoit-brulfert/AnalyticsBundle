@@ -1,7 +1,4 @@
 parameters:
-#    cethyworks_analytics.example.class: Cethyworks\AnalyticsBundle\Example
-
-services:
-#    cethyworks_analytics.example:
-#        class: %cethyworks_analytics.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    cethyworks.analytics_tracker.class: Cethyworks\AnalyticsBundle\Listener\AnalyticsTrackerListener
+    cethyworks.googleAnalytics_tracker.template: CethyworksAnalyticsBundle:Tracker:googleAnalytics.html.twig
+    cethyworks.analytics_auto.template: CethyworksAnalyticsBundle:SegmentIo:analytics_auto.html.twig
