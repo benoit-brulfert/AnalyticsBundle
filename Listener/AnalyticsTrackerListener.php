@@ -16,7 +16,7 @@ use Symfony\Bundle\TwigBundle\TwigEngine;
  *
  * The onKernelResponse method must be connected to the kernel.response event.
  *
- * The tracker is only injected on well-formed HTML (with a proper </body> tag).
+ * The tracker is only injected on well-formed HTML (with a proper </head> tag).
  * This means that the tracker is never included in sub-requests or ESI requests.
  */
 class AnalyticsTrackerListener
@@ -112,7 +112,7 @@ class AnalyticsTrackerListener
 
         $content = $response->getContent();
 
-        $pos = $posrFunction($content, '</body>');
+        $pos = $posrFunction($content, '</head>');
         if (false !== $pos) {
             $toolbar = $this->templating->render($this->template, $this->params);
             $toolbar = "\n" . str_replace("\n", '', $toolbar) . "\n";

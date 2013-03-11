@@ -2,3 +2,9 @@ parameters:
     cethyworks.analytics_tracker.class: Cethyworks\AnalyticsBundle\Listener\AnalyticsTrackerListener
     cethyworks.googleAnalytics_tracker.template: CethyworksAnalyticsBundle:Tracker:googleAnalytics.html.twig
     cethyworks.analytics_auto.template: CethyworksAnalyticsBundle:SegmentIo:analytics_auto.html.twig
+
+services:
+    kernel.listener.start.exercise:
+        class: Cethyworks\AnalyticsBundle\Listener\Listener
+        tags:
+            - { name: kernel.event_listener, event: start.exercise, method: onExerciseStart }
