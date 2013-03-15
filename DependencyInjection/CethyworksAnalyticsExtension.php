@@ -37,6 +37,7 @@ class CethyworksAnalyticsExtension extends Extension
         if(isset($config['segmentIo']))
         {
             foreach ($config['segmentIo'] as $name => $segmentIo) {
+                $container->setParameter('cethyworks_analytics.segmentIo.account_id', $segmentIo);
                 $this->loadSegmentIo($name, $segmentIo, $container, $config['environments']);
             }
         }
