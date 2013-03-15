@@ -5,25 +5,62 @@ namespace Cethyworks\AnalyticsBundle\Listener;
 require_once '../vendor/Analytics-php/lib/analytics.php';
 
 use aba\StudentBundle\Events\UserExerciseWorkedEvent;
-/*
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpFoundation\Response;*/
-/*
-use aba\StudentBundle\Events\UserExerciseEvents;*/
+use aba\QCMBundle\Events\QcmWorkedEvent;
+use Cethyworks\AnalyticsBundle\AnalyticsHandler\AnalyticsHandler;
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class Listener 
 {
+    private $init;
+
+    public function __construct(AnalyticsHandler $init) 
+    {
+        $this->init = $init;
+    }
+    
     public function onExerciseStart(UserExerciseWorkedEvent $event)
     {
-      var_dump($event->getUserExerciseWorked());die;
-      
-        \Analytics::init("gf6hp3k4v6");
-        \Analytics::identify("019mr8mf4r", array(
+        $this->init->initialize($event->getUser());
+        $uid = $event->getUser()->getId();
+        $ex_id = $event->getExerciseId();
+
+        \Analytics::track("$uid", "start exercise", array(
+            "exercise_id"   => "$ex_id",
         ));
+    }
+    
+    public function onAskResult(UserExerciseWorkedEvent $event)
+    {
+        $this->init->initialize($event->getUser());
+        $ex_id = $event->getExerciseId();
+        $uid = $event->getUser()->getId();
+
+        \Analytics::track("$uid", "ask result", array(
+            "exercise_id"   => "$ex_id",
+        ));
+    }
+    
+    public function onUserConnect(InteractiveLoginEvent $event)
+    {
+        $this->init->initialize($event->getAuthenticationToken());
+        $uid = $event->getAuthenticationToken()->getUser()->getId();
+
+        \Analytics::track("$uid", "user connect", array(
+        ));   
+    }
+    
+    public function onExerciseAskTip(QcmWorkedEvent $event)
+    {       
+        $this->init->initialize($event->getUser());
+        $uid = $event->getUser()->getId();
         
-        Analytics::track("019mr8mf4r", "start exercise", array(
-        ));
+       $questionId = $event->getQuestionId();
+       $tipPosition = $event->getTipPosition();
+       
+        \Analytics::track("$uid", "exercise.ask_tip", array(
+            "question_id"   => "$questionId",
+            "tip_position"  => "$tipPosition"
+        )); 
     }
 }
 
