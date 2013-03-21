@@ -11,6 +11,7 @@ services:
             - { name: kernel.event_listener, event: ask.result, method: onAskResult }
             - { name: kernel.event_listener, event: security.interactive_login, method: onUserConnect }
             - { name: kernel.event_listener, event: exercise.ask_tip, method: onExerciseAskTip }
+            - { name: kernel.event_listener, event: video.play, method: onVideoPlay }
         arguments: ["@initialize.listener.identify"]
             
 
