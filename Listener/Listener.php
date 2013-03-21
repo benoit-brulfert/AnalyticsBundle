@@ -2,11 +2,9 @@
 
 namespace Cethyworks\AnalyticsBundle\Listener;
 
-require_once '../vendor/Analytics-php/lib/analytics.php';
-
 use aba\StudentBundle\Events\UserExerciseWorkedEvent;
 use aba\QCMBundle\Events\QcmWorkedEvent;
-use Cethyworks\AnalyticsBundle\AnalyticsHandler\AnalyticsHandler;
+use Cethyworks\AnalyticsBundle\Handler\AnalyticsHandler;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use aba\VideoBundle\Events\UserVideoWatchEvent;
 
